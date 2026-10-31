@@ -12,8 +12,8 @@ export const envConfig = {
   // Database
   DATABASE_URL: process.env.DATABASE_URL || '',
   DB_HOST: process.env.DATABASE_HOST || 'localhost',
-  DB_PORT: parseInt(process.env.DATABASE_PORT || '3306', 10),
-  DB_USER: process.env.DATABASE_USERNAME || 'root',
+  DB_PORT: parseInt(process.env.DATABASE_PORT || '5432', 10),
+  DB_USER: process.env.DATABASE_USERNAME || 'postgres',
   DB_PASSWORD: process.env.DATABASE_PASSWORD || '',
   DB_NAME: process.env.DATABASE_NAME || 'jcb_fleet_management',
   DB_SSL: process.env.DATABASE_SSL === 'true',

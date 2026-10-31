@@ -59,12 +59,12 @@ function setupHealthCheck() {
       await app.sequelize.authenticate();
       return reply.status(200).send({
         status: 200,
-        message: 'MySQL Connected successfully',
+        message: 'PostgreSQL Connected successfully',
         name: 'JCB Fleet Management API',
         version: '1.0.0',
         dependencies: [
           {
-            type: 'database-mysql',
+            type: 'database-postgres',
             status: true,
             required: true,
           },
@@ -74,7 +74,7 @@ function setupHealthCheck() {
     } catch (error) {
       return reply.status(503).send({
         status: 503,
-        message: 'MySQL connection failed',
+        message: 'PostgreSQL connection failed',
         error: error instanceof Error ? error.message : String(error),
       });
     }
@@ -85,14 +85,14 @@ function setupHealthCheck() {
       await app.sequelize.authenticate();
       return reply.status(200).send({
         status: 200,
-        message: 'MySQL Connected',
+        message: 'PostgreSQL Connected',
         name: 'Auth API',
         version: '1.0.0',
       });
     } catch (error) {
       return reply.status(503).send({
         status: 503,
-        message: 'MySQL connection failed',
+        message: 'PostgreSQL connection failed',
         error: error instanceof Error ? error.message : String(error),
       });
     }

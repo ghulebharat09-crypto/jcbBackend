@@ -9,7 +9,13 @@ declare module 'fastify' {
   }
 }
 
-const dialectOptions = envConfig.DB_SSL
+const requiresSSL =
+  envConfig.DB_SSL ||
+  (Boolean(envConfig.DATABASE_URL) &&
+    (envConfig.DATABASE_URL.includes('sslmode=require') ||
+      envConfig.DATABASE_URL.includes('.render.com')));
+
+const dialectOptions = requiresSSL
   ? {
       ssl: {
         require: true,
@@ -20,7 +26,7 @@ const dialectOptions = envConfig.DB_SSL
 
 export const sequelize = envConfig.DATABASE_URL
   ? new Sequelize(envConfig.DATABASE_URL, {
-      dialect: 'mysql',
+      dialect: 'postgres',
       logging: false,
       dialectOptions,
       pool: {
@@ -43,7 +49,7 @@ export const sequelize = envConfig.DATABASE_URL
       {
         host: envConfig.DB_HOST,
         port: envConfig.DB_PORT,
-        dialect: 'mysql',
+        dialect: 'postgres',
         logging: false,
         dialectOptions,
         pool: {
@@ -64,10 +70,10 @@ export const sequelize = envConfig.DATABASE_URL
 async function sequelizePlugin(fastify: FastifyInstance): Promise<void> {
   try {
     await sequelize.authenticate();
-    fastify.log.info('MySQL Database connected successfully via Sequelize.');
+    fastify.log.info('PostgreSQL Database connected successfully via Sequelize.');
     fastify.decorate('sequelize', sequelize);
   } catch (error) {
-    fastify.log.error(`Unable to connect to MySQL database: ${error}`);
+    fastify.log.error(`Unable to connect to PostgreSQL database: ${error}`);
     throw error;
   }
 }
