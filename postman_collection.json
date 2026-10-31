@@ -1,0 +1,368 @@
+{
+  "info": {
+    "_postman_id": "jcb-fleet-backend-2026",
+    "name": "JCB Fleet Management System API",
+    "description": "Complete Postman collection for JCB Fleet Management System built with Fastify, Sequelize, MySQL and TypeScript.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8200/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customer_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "machine_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "operator_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "maintenance_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "invoice_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health Checks",
+      "item": [
+        {
+          "name": "Health Check (Main)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:8200/health-check"
+          }
+        },
+        {
+          "name": "Health Check (Auth)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:8200/auth/health-check"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"admin@jcbfleet.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        },
+        {
+          "name": "Signup New Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Operations Head\",\n  \"phone\": \"9876500000\",\n  \"email\": \"ops@jcbfleet.com\",\n  \"password\": \"Ops@12345\",\n  \"role\": \"admin\",\n  \"admin_key\": \"jcb_admin_secret_2026\"\n}"
+            },
+            "url": "{{base_url}}/auth/signup"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"admin@jcbfleet.com\"\n}"
+            },
+            "url": "{{base_url}}/auth/forgot-password"
+          }
+        },
+        {
+          "name": "Get Authenticated User (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Customer Module",
+      "item": [
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Metro Projects India\",\n  \"company_name\": \"Metro Rail Infra Ltd\",\n  \"phone\": \"9812345678\",\n  \"email\": \"procurement@metroprojects.in\",\n  \"address\": \"Metro Depot, Line 3, Pune\",\n  \"customer_type\": \"corporate\"\n}"
+            },
+            "url": "{{base_url}}/customers/create-customer"
+          }
+        },
+        {
+          "name": "Get All Customers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/customers/getAll-customer?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Get Customer By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/customers/customer/{{customer_id}}"
+          }
+        },
+        {
+          "name": "Update Customer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Metro Yard Sector 4, Pune\"\n}"
+            },
+            "url": "{{base_url}}/customers/customer/{{customer_id}}/update-customer"
+          }
+        },
+        {
+          "name": "Get Customer Bookings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/customers/customer/{{customer_id}}/bookings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Machine Module",
+      "item": [
+        {
+          "name": "Create Machine",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JCB 4DX Heavy Loader\",\n  \"model\": \"4DX Super 2024\",\n  \"registration_number\": \"MH-12-LD-5566\",\n  \"machine_type\": \"Backhoe Loader\",\n  \"status\": \"available\",\n  \"hourly_rate\": 1400,\n  \"daily_rate\": 11000,\n  \"base_yard_location\": \"Hadapsar Industrial Yard\"\n}"
+            },
+            "url": "{{base_url}}/machines/create-machine"
+          }
+        },
+        {
+          "name": "Get All Machines",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/machines/getAll-machine"
+          }
+        },
+        {
+          "name": "Check Machine Availability",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/machines/check-availability?start_date=2026-11-01&end_date=2026-11-10"
+          }
+        },
+        {
+          "name": "Update Machine Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"available\"\n}"
+            },
+            "url": "{{base_url}}/machines/machine/{{machine_id}}/update-status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Booking Module",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"{{customer_id}}\",\n  \"machine_id\": \"{{machine_id}}\",\n  \"operator_id\": \"{{operator_id}}\",\n  \"site_location\": \"Smart City Highway Project, Baner\",\n  \"work_description\": \"Road leveling and gravel distribution\",\n  \"start_date\": \"2026-11-05\",\n  \"end_date\": \"2026-11-07\",\n  \"rental_type\": \"daily\",\n  \"estimated_hours\": 24,\n  \"advance_payment\": 5000\n}"
+            },
+            "url": "{{base_url}}/bookings/create-booking"
+          }
+        },
+        {
+          "name": "Get All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/bookings/getAll-booking"
+          }
+        },
+        {
+          "name": "Get Booking By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/bookings/booking/{{booking_id}}"
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"active\"\n}"
+            },
+            "url": "{{base_url}}/bookings/booking/{{booking_id}}/update-status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Payments & Billing",
+      "item": [
+        {
+          "name": "Calculate Settlement Bill",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/payments/calculate-bill/{{booking_id}}"
+          }
+        },
+        {
+          "name": "Create Payment Settlement",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"{{booking_id}}\",\n  \"payment_type\": \"final\",\n  \"payment_method\": \"upi\",\n  \"base_charge\": 33000,\n  \"overtime_charge\": 2400,\n  \"fuel_transport_charge\": 1500,\n  \"total_amount\": 31900,\n  \"notes\": \"Final balance cleared\"\n}"
+            },
+            "url": "{{base_url}}/payments/create-payment"
+          }
+        },
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/payments/getAll-payment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard, Schedule & Analytics",
+      "item": [
+        {
+          "name": "Dashboard KPI Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/dashboard/get-summary"
+          }
+        },
+        {
+          "name": "Daily Fleet Work Schedule",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/schedule/daily-schedule?date=2026-11-05"
+          }
+        },
+        {
+          "name": "Monthly Revenue Analytics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/reports/revenue-analytics?year=2026"
+          }
+        },
+        {
+          "name": "Fleet Utilization Percentage",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/reports/fleet-utilization"
+          }
+        }
+      ]
+    }
+  ]
+}
